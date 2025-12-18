@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasifikasi Lingkungan AI + Edukasi Sosial</title>
+    <style>
+        /* CSS: Reset & Global Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f0f23 0%, #1a0033 50%, #00d4ff 100%); color: #fff; overflow-x: hidden; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        /* Particle Background Animation */
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .particle { position: absolute; background: rgba(0, 212, 255, 0.6); border-radius: 50%; animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+        
+        /* Header & Nav */
+        header { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8em; font-weight: bold; background: linear-gradient(45deg, #00d4ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 20px; list-style: none; }
+        .nav-links a, .nav-links button { color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 50px; transition: all 0.3s ease; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .nav-links a:hover, .nav-links button:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,212,255,0.4); background: rgba(0,212,255,0.2); }
+        .hidden { display: none !important; }
+        
+        /* Login/Register Form - Glassmorphism */
+        .auth-form { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+        .form-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(30px); padding: 50px; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); max-width: 400px; width: 100%; animation: slideIn 1s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        .form-card h1 { font-size: 2.5em; margin-bottom: 30px; background: linear-gradient(45deg, #00d4ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input { width: 100%; padding: 15px; margin: 15px 0; border: none; border-radius: 15px; background: rgba(255,255,255,0.2); color: #fff; font-size: 1.1em; backdrop-filter: blur(10px); transition: all 0.3s; }
+        input::placeholder { color: rgba(255,255,255,0.7); }
+        input:focus { outline: none; box-shadow: 0 0 20px rgba(0,212,255,0.5); transform: scale(1.02); }
+        .btn { padding: 15px 30px; border: none; border-radius: 50px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: all 0.3s; margin: 10px; }
+        .btn-primary { background: linear-gradient(45deg, #00d4ff, #0099ff); box-shadow: 0 10px 30px rgba(0,212,255,0.4); }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 40px rgba(0,212,255,0.6); }
+        .toggle-link { color: #00d4ff; cursor: pointer; text-decoration: underline; }
+        
+        /* Main Dashboard */
+        .main-content { margin-top: 100px; padding: 50px 0; }
+        .hero { text-align: center; margin-bottom: 50px; }
+        .hero h1 { font-size: 4em; margin-bottom: 20px; background: linear-gradient(45deg, #fff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { filter: drop-shadow(0 0 20px #00d4ff); } to { filter: drop-shadow(0 0 30px #ff00ff); } }
+        .upload-area { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border: 2px dashed rgba(0,212,255,0.5); border-radius: 30px; padding: 60px; text-align: center; transition: all 0.3s; cursor: pointer; max-width: 600px; margin: 0 auto; position: relative; overflow: hidden; }
+        .upload-area:hover { border-color: #ff00ff; box-shadow: 0 20px 60px rgba(255,0,255,0.3); transform: scale(1.02); }
+        .upload-area.dragover { border-color: #00ff88; background: rgba(0,255,136,0.1); }
+        #fileInput { display: none; }
+        .upload-icon { font-size: 5em; margin-bottom: 20px; display: block; }
+        #aiResult { margin-top: 30px; padding: 30px; background: rgba(0,255,136,0.2); border-radius: 20px; display: none; animation: bounceIn 0.8s; border: 1px solid rgba(0,255,136,0.5); }
+        @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.5); } 50% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+        .confidence { font-size: 1.5em; font-weight: bold; color: #00ff88; }
+        
+        /* Edukasi Section */
+        .edukasi { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 80px; }
+        .edukasi-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); padding: 30px; border-radius: 20px; text-align: center; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.2); }
+        .edukasi-card:hover { transform: translateY(-10px) rotateX(5deg); box-shadow: 0 20px 50px rgba(0,212,255,0.3); }
+        .edukasi-card h3 { margin-bottom: 15px; color: #00d4ff; }
+        
+        /* Loading Spinner */
+        .loading { display: none; text-align: center; margin: 20px 0; }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.2); border-top: 5px solid #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Responsive */
+        @media (max-width: 768px) { .hero h1 { font-size: 2.5em; } .form-card { padding: 30px; margin: 20px; } nav { flex-direction: column; gap: 10px; } }
+        
+        /* Dark Mode Toggle */
+        body.dark { background: linear-gradient(135deg, #000, #1a1a2e, #16213e); }
+        .dark-toggle { background: none; border: none; font-size: 1.5em; cursor: pointer; color: #fff; }
+    </style>
+</head>
+<body>
+    <!-- Particle Canvas -->
+    <canvas id="particles"></canvas>
+    
+    <!-- Header -->
+    <header id="header">
+        <nav class="container">
+            <div class="logo">🌿 AI EcoClass</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" onclick="showEdukasi()">Edukasi</a></li>
+                <li><button onclick="toggleDarkMode()" class="dark-toggle">🌙</button></li>
+                <li><button id="logoutBtn" onclick="logout()" class="hidden">Logout</button>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Login/Register Section -->
+    <div id="authSection" class="auth-form">
+        <div class="form-card">
+            <h1 id="authTitle">Login Akun</h1>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn btn-primary" onclick="handleAuth()">Masuk</button>
+            <p>Belum punya akun? <span class="toggle-link" onclick="toggleAuth()">Daftar di sini</span></p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content hidden">
+        <div class="hero">
+            <h1>Klasifikasi Lingkungan AI</h1>
+            <p>Upload gambar untuk analisis AI otomatis + edukasi sosial ramah lingkungan</p>
+        </div>
+        
+        <div class="container">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📸</div>
+                <h3>Drag & Drop atau Klik untuk Upload Gambar</h3>
+                <p>Format: JPG, PNG | Max: 5MB</p>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>AI sedang menganalisis...</p>
+            </div>
+            
+            <div id="aiResult">
+                <h3>Hasil Klasifikasi: <span id="resultLabel" class="confidence"></span></h3>
+                <p>Keyakinan: <span id="confidence"></span></p>
+                <p id="edukasiTip"></p>
+                <img id="previewImg" style="max-width: 300px; border-radius: 15px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            </div>
+        </div>
+        
+        <!-- Edukasi Sosial -->
+        <section id="edukasiSection" class="edukasi container hidden">
+            <div class="edukasi-card">
+                <h3>♻️ Daur Ulang</h3>
+                <p>Pilah sampah organik & anorganik untuk lingkungan bersih.</p>
+            </div>
+            <div class="edukasi-card">
+                <h3>🌳 Tanam Pohon</h3>
+                <p>Setiap pohon menyerap 22kg CO2/tahun.</p>
+            </div>
+            <div class="edukasi-card">
+                <h3>💧 Hemat Air</h3>
+                <p>Matikan keran saat gosok gigi, hemat 10L/hari.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // JavaScript: State Management & Auth Simulation
+        let isLoggedIn = false;
+        let users = JSON.parse(localStorage.getItem('users')) || [{username: 'admin', password: '123'}];
+        let currentUser = null;
+        let isLogin = true;
+
+        // Particle Animation
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const particles = [];
+            for(let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 3 + 1,
+                    speedY: Math.random() * 1 + 0.5,
+                    opacity: Math.random() * 0.5 + 0.2
+                });
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 212, 255, ${p.opacity})`;
+                    ctx.fill();
+                    p.y += p.speedY;
+                    if(p.y > canvas.height) p.y = 0;
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Auth Functions
+        function toggleAuth() {
+            isLogin = !isLogin;
+            document.getElementById('authTitle').textContent = isLogin ? 'Login Akun' : 'Daftar Akun';
+            document.getElementById('username').placeholder = isLogin ? 'Username' : 'Username Baru';
+        }
+
+        function handleAuth() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if(!username || !password) return alert('Isi semua field!');
+            
+            if(isLogin) {
+                const user = users.find(u => u.username === username && u.password === password);
+                if(user) {
+                    loginSuccess(user);
+                } else {
+                    alert('Username/password salah!');
+                }
+            } else {
+                if(users.find(u => u.username === username)) {
+                    alert('Username sudah ada!');
+                    return;
+                }
+                users.push({username, password});
+                localStorage.setItem('users', JSON.stringify(users));
+                alert('Registrasi sukses! Silakan login.');
+                toggleAuth();
+            }
+        }
+
+        function loginSuccess(user) {
+            currentUser = user;
+            isLoggedIn = true;
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            document.querySelector('.logo').textContent = `🌿 ${user.username}`;
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            document.querySelector('.logo').textContent = '🌿 AI EcoClass';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('aiResult').style.display = 'none';
+        }
+
+        // Upload & AI Simulation
+        document.getElementById('fileInput').addEventListener('change', handleImageUpload);
+        const uploadArea = document.querySelector('.upload-area');
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+            uploadArea.addEventListener(event, e => {
+                e.preventDefault();
+                if(['dragenter', 'dragover'].includes(event)) uploadArea.classList.add('dragover');
+                else uploadArea.classList.remove('dragover');
+                if(event === 'drop') {
+                    const files = e.dataTransfer.files;
+                    if(files[0]) document.getElementById('fileInput').files = files;
+                    handleImageUpload({target: {files: files}});
+                }
+            });
+        });
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('previewImg');
+                img.src = e.target.result;
+                simulateAI();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function simulateAI() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('aiResult').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                const labels = ['Sampah Plastik ♻️', 'Alam Hijau 🌳', 'Polusi Tinggi ⚠️', 'Daur Ulang Siap 🟢'];
+                const confidences = [92, 78, 65, 95];
+                const randomIdx = Math.floor(Math.random() * labels.length);
+                document.getElementById('resultLabel').textContent = labels[randomIdx];
+                document.getElementById('confidence').textContent = `${confidences[randomIdx]}%`;
+                document.getElementById('edukasiTip').textContent = getEdukasiTip(labels[randomIdx]);
+                document.getElementById('aiResult').style.display = 'block';
+            }, 3000);
+        }
+
+        function getEdukasiTip(label) {
+            const tips = {
+                'Sampah Plastik ♻️': 'Pisahkan plastik untuk didaur ulang. Hindari botol sekali pakai!',
+                'Alam Hijau 🌳': 'Bagus! Dukung konservasi hutan.',
+                'Polusi Tinggi ⚠️': 'Kurangi plastik & gunakan transportasi umum.',
+                'Daur Ulang Siap 🟢': 'Siap didaur ulang. Bawa ke TPS 3R terdekat.'
+            };
+            return tips[label] || 'Pertahankan lingkungan bersih!';
+        }
+
+        // Additional Features
+        function showEdukasi() {
+            document.getElementById('edukasiSection').classList.toggle('hidden');
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+        }
+
+        // Init
+        initParticles();
+        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark');
+        window.addEventListener('keydown', e => {
+            if(e.key === 'Enter' && document.getElementById('authSection').classList.contains('auth-form')) handleAuth();
+        });
+    </script>
+</body>
+</html>
