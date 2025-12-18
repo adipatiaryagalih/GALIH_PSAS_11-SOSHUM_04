@@ -5,305 +5,923 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Klasifikasi Lingkungan AI + Edukasi Sosial</title>
     <style>
-        /* CSS: Reset & Global Styles */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f0f23 0%, #1a0033 50%, #00d4ff 100%); color: #fff; overflow-x: hidden; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        
-        /* Particle Background Animation */
-        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .particle { position: absolute; background: rgba(0, 212, 255, 0.6); border-radius: 50%; animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
-        
-        /* Header & Nav */
-        header { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-        nav { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.8em; font-weight: bold; background: linear-gradient(45deg, #00d4ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-links { display: flex; gap: 20px; list-style: none; }
-        .nav-links a, .nav-links button { color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 50px; transition: all 0.3s ease; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
-        .nav-links a:hover, .nav-links button:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,212,255,0.4); background: rgba(0,212,255,0.2); }
-        .hidden { display: none !important; }
-        
-        /* Login/Register Form - Glassmorphism */
-        .auth-form { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
-        .form-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(30px); padding: 50px; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); max-width: 400px; width: 100%; animation: slideIn 1s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-        .form-card h1 { font-size: 2.5em; margin-bottom: 30px; background: linear-gradient(45deg, #00d4ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        input { width: 100%; padding: 15px; margin: 15px 0; border: none; border-radius: 15px; background: rgba(255,255,255,0.2); color: #fff; font-size: 1.1em; backdrop-filter: blur(10px); transition: all 0.3s; }
-        input::placeholder { color: rgba(255,255,255,0.7); }
-        input:focus { outline: none; box-shadow: 0 0 20px rgba(0,212,255,0.5); transform: scale(1.02); }
-        .btn { padding: 15px 30px; border: none; border-radius: 50px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: all 0.3s; margin: 10px; }
-        .btn-primary { background: linear-gradient(45deg, #00d4ff, #0099ff); box-shadow: 0 10px 30px rgba(0,212,255,0.4); }
-        .btn-primary:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 40px rgba(0,212,255,0.6); }
-        .toggle-link { color: #00d4ff; cursor: pointer; text-decoration: underline; }
-        
-        /* Main Dashboard */
-        .main-content { margin-top: 100px; padding: 50px 0; }
-        .hero { text-align: center; margin-bottom: 50px; }
-        .hero h1 { font-size: 4em; margin-bottom: 20px; background: linear-gradient(45deg, #fff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: glow 2s ease-in-out infinite alternate; }
-        @keyframes glow { from { filter: drop-shadow(0 0 20px #00d4ff); } to { filter: drop-shadow(0 0 30px #ff00ff); } }
-        .upload-area { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border: 2px dashed rgba(0,212,255,0.5); border-radius: 30px; padding: 60px; text-align: center; transition: all 0.3s; cursor: pointer; max-width: 600px; margin: 0 auto; position: relative; overflow: hidden; }
-        .upload-area:hover { border-color: #ff00ff; box-shadow: 0 20px 60px rgba(255,0,255,0.3); transform: scale(1.02); }
-        .upload-area.dragover { border-color: #00ff88; background: rgba(0,255,136,0.1); }
-        #fileInput { display: none; }
-        .upload-icon { font-size: 5em; margin-bottom: 20px; display: block; }
-        #aiResult { margin-top: 30px; padding: 30px; background: rgba(0,255,136,0.2); border-radius: 20px; display: none; animation: bounceIn 0.8s; border: 1px solid rgba(0,255,136,0.5); }
-        @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.5); } 50% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
-        .confidence { font-size: 1.5em; font-weight: bold; color: #00ff88; }
-        
-        /* Edukasi Section */
-        .edukasi { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 80px; }
-        .edukasi-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); padding: 30px; border-radius: 20px; text-align: center; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.2); }
-        .edukasi-card:hover { transform: translateY(-10px) rotateX(5deg); box-shadow: 0 20px 50px rgba(0,212,255,0.3); }
-        .edukasi-card h3 { margin-bottom: 15px; color: #00d4ff; }
-        
-        /* Loading Spinner */
-        .loading { display: none; text-align: center; margin: 20px 0; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.2); border-top: 5px solid #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #10b981;
+            --dark-green: #047857;
+            --light-green: #d1fae5;
+            --danger-red: #ef4444;
+            --warning-yellow: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            --glass-bg: rgba(255,255,255,0.95);
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: var(--card-shadow);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-green), var(--dark-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-green);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .login-btn, .logout-btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .login-btn {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16,185,129,0.3);
+        }
+
+        .logout-btn {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239,68,68,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: var(--bg-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, white, rgba(255,255,255,0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid rgba(16,185,129,0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: none;
+            padding-top: 120px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 3rem 0;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--primary-green);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(16,185,129,0.05);
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--dark-green);
+            background: rgba(16,185,129,0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        /* Results Section */
+        .results {
+            display: none;
+            margin-top: 3rem;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--light-green), white);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--dark-green));
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        /* Infografis Section */
+        .infografis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .infografis-card {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .infografis-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .infografis-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-green), var(--dark-green));
+        }
+
         /* Responsive */
-        @media (max-width: 768px) { .hero h1 { font-size: 2.5em; } .form-card { padding: 30px; margin: 20px; } nav { flex-direction: column; gap: 10px; } }
-        
-        /* Dark Mode Toggle */
-        body.dark { background: linear-gradient(135deg, #000, #1a1a2e, #16213e); }
-        .dark-toggle { background: none; border: none; font-size: 1.5em; cursor: pointer; color: #fff; }
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .upload-section {
+                padding: 2rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
-    <!-- Particle Canvas -->
-    <canvas id="particles"></canvas>
-    
-    <!-- Header -->
-    <header id="header">
-        <nav class="container">
-            <div class="logo">🌿 AI EcoClass</div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#" onclick="showEdukasi()">Edukasi</a></li>
-                <li><button onclick="toggleDarkMode()" class="dark-toggle">🌙</button></li>
-                <li><button id="logoutBtn" onclick="logout()" class="hidden">Logout</button>
-            </ul>
-        </nav>
-    </header>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <h2 style="margin-top: 2rem; color: white;">Memuat AI Lingkungan...</h2>
+    </div>
 
-    <!-- Login/Register Section -->
-    <div id="authSection" class="auth-form">
-        <div class="form-card">
-            <h1 id="authTitle">Login Akun</h1>
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button class="btn btn-primary" onclick="handleAuth()">Masuk</button>
-            <p>Belum punya akun? <span class="toggle-link" onclick="toggleAuth()">Daftar di sini</span></p>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="logo">🌿 AI EcoClass</div>
+        <ul class="nav-links">
+            <li><a href="#home">Beranda</a></li>
+            <li><a href="#upload">Analisis</a></li>
+            <li><a href="#infografis">Edukasi</a></li>
+        </ul>
+        <div id="authSection">
+            <a href="#" class="login-btn" onclick="showLogin()">Masuk</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Klasifikasi Lingkungan Berbasis AI</h1>
+            <p>Deteksi kerusakan lingkungan secara instan dengan kecerdasan buatan dan dapatkan solusi edukasi sosial untuk menjaga bumi kita.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <!-- Upload Section -->
+            <section class="upload-section" id="upload">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(45deg, var(--primary-green), var(--dark-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📸 Upload Gambar Lingkungan</h2>
+                <p style="color: var(--text-light); margin-bottom: 2rem;">Drag & drop atau klik untuk mengupload gambar kerusakan lingkungan</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <h3>Seret gambar ke sini atau klik untuk pilih</h3>
+                    <p style="color: var(--text-light);">Format: JPG, PNG, max 5MB</p>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="results" id="results">
+                    <div class="result-card">
+                        <img id="resultImage" style="max-width: 300px; border-radius: 15px; margin-bottom: 1.5rem; box-shadow: var(--card-shadow);">
+                        <h3 id="resultTitle">Hasil Analisis</h3>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill" style="width: 0%;"></div>
+                        </div>
+                        <p id="confidenceText">0% Confidence</p>
+                        <div id="analysisDetail" style="margin-top: 2rem; text-align: left;"></div>
+                        <div id="solutionDetail" style="margin-top: 2rem; padding: 1.5rem; background: rgba(16,185,129,0.1); border-radius: 15px; border-left: 5px solid var(--primary-green);"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Infografis Section -->
+            <section id="infografis">
+                <h2 style="text-align: center; font-size: 2.5rem; margin: 4rem 0 2rem; background: linear-gradient(45deg, var(--primary-green), var(--dark-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📊 Infografis Edukasi Lingkungan</h2>
+                
+                <div class="infografis-grid">
+                    <div class="infografis-card" onclick="showInfografis('damage')">
+                        <h3>🚨 Kerusakan Lingkungan</h3>
+                        <p>Kenali dampak buruk pencemaran, deforestasi, dan limbah plastik terhadap ekosistem.</p>
+                    </div>
+                    <div class="infografis-card" onclick="showInfografis('clean')">
+                        <h3>✅ Lingkungan Bersih</h3>
+                        <p>Temukan solusi praktis untuk menjaga kebersihan dan keberlanjutan lingkungan.</p>
+                    </div>
+                    <div class="infografis-card" onclick="showInfografis('impact')">
+                        <h3>📈 Dampak Sosial</h3>
+                        <p>Pelajari hubungan kerusakan lingkungan dengan kesehatan masyarakat dan ekonomi.</p>
+                    </div>
+                </div>
+
+                <!-- Infografis Modal -->
+                <div class="modal" id="infografisModal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeInfografis()">&times;</span>
+                        <div id="infografisContent"></div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div id="mainContent" class="main-content hidden">
-        <div class="hero">
-            <h1>Klasifikasi Lingkungan AI</h1>
-            <p>Upload gambar untuk analisis AI otomatis + edukasi sosial ramah lingkungan</p>
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLogin()">&times;</span>
+            <h2>🔐 Masuk ke AI EcoClass</h2>
+            <div class="input-group">
+                <span class="input-icon">👤</span>
+                <input type="text" id="username" placeholder="Username">
+            </div>
+            <div class="input-group">
+                <span class="input-icon">🔒</span>
+                <input type="password" id="password" placeholder="Password">
+            </div>
+            <button class="login-btn" style="width: 100%; margin-top: 1rem;" onclick="login()">Masuk Sekarang</button>
+            <p style="margin-top: 1rem; color: var(--text-light);">Demo: user / 123456</p>
         </div>
-        
-        <div class="container">
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-icon">📸</div>
-                <h3>Drag & Drop atau Klik untuk Upload Gambar</h3>
-                <p>Format: JPG, PNG | Max: 5MB</p>
-                <input type="file" id="fileInput" accept="image/*">
-            </div>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>AI sedang menganalisis...</p>
-            </div>
-            
-            <div id="aiResult">
-                <h3>Hasil Klasifikasi: <span id="resultLabel" class="confidence"></span></h3>
-                <p>Keyakinan: <span id="confidence"></span></p>
-                <p id="edukasiTip"></p>
-                <img id="previewImg" style="max-width: 300px; border-radius: 15px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            </div>
-        </div>
-        
-        <!-- Edukasi Sosial -->
-        <section id="edukasiSection" class="edukasi container hidden">
-            <div class="edukasi-card">
-                <h3>♻️ Daur Ulang</h3>
-                <p>Pilah sampah organik & anorganik untuk lingkungan bersih.</p>
-            </div>
-            <div class="edukasi-card">
-                <h3>🌳 Tanam Pohon</h3>
-                <p>Setiap pohon menyerap 22kg CO2/tahun.</p>
-            </div>
-            <div class="edukasi-card">
-                <h3>💧 Hemat Air</h3>
-                <p>Matikan keran saat gosok gigi, hemat 10L/hari.</p>
-            </div>
-        </section>
     </div>
 
     <script>
-        // JavaScript: State Management & Auth Simulation
+        // State Management
         let isLoggedIn = false;
-        let users = JSON.parse(localStorage.getItem('users')) || [{username: 'admin', password: '123'}];
-        let currentUser = null;
-        let isLogin = true;
+        let currentImage = null;
 
-        // Particle Animation
-        function initParticles() {
-            const canvas = document.getElementById('particles');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const particles = [];
-            for(let i = 0; i < 100; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 3 + 1,
-                    speedY: Math.random() * 1 + 0.5,
-                    opacity: Math.random() * 0.5 + 0.2
-                });
-            }
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(0, 212, 255, ${p.opacity})`;
-                    ctx.fill();
-                    p.y += p.speedY;
-                    if(p.y > canvas.height) p.y = 0;
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
+        // Demo users
+        const demoUsers = {
+            'user': '123456'
+        };
+
+        // Initialize
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // Login System
+        function showLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
         }
 
-        // Auth Functions
-        function toggleAuth() {
-            isLogin = !isLogin;
-            document.getElementById('authTitle').textContent = isLogin ? 'Login Akun' : 'Daftar Akun';
-            document.getElementById('username').placeholder = isLogin ? 'Username' : 'Username Baru';
+        function closeLogin() {
+            document.getElementById('loginModal').style.display = 'none';
         }
 
-        function handleAuth() {
+        function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            if(!username || !password) return alert('Isi semua field!');
-            
-            if(isLogin) {
-                const user = users.find(u => u.username === username && u.password === password);
-                if(user) {
-                    loginSuccess(user);
-                } else {
-                    alert('Username/password salah!');
-                }
-            } else {
-                if(users.find(u => u.username === username)) {
-                    alert('Username sudah ada!');
-                    return;
-                }
-                users.push({username, password});
-                localStorage.setItem('users', JSON.stringify(users));
-                alert('Registrasi sukses! Silakan login.');
-                toggleAuth();
-            }
-        }
 
-        function loginSuccess(user) {
-            currentUser = user;
-            isLoggedIn = true;
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('mainContent').classList.remove('hidden');
-            document.getElementById('logoutBtn').classList.remove('hidden');
-            document.querySelector('.logo').textContent = `🌿 ${user.username}`;
+            if (demoUsers[username] && demoUsers[username] === password) {
+                isLoggedIn = true;
+                document.getElementById('authSection').innerHTML = 
+                    '<a href="#" class="logout-btn" onclick="logout()">Keluar</a>';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                showNotification('Selamat datang di AI EcoClass!', 'success');
+            } else {
+                showNotification('Username atau password salah!', 'error');
+            }
         }
 
         function logout() {
             isLoggedIn = false;
-            currentUser = null;
-            document.getElementById('mainContent').classList.add('hidden');
-            document.getElementById('authSection').classList.remove('hidden');
-            document.getElementById('logoutBtn').classList.add('hidden');
-            document.querySelector('.logo').textContent = '🌿 AI EcoClass';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('aiResult').style.display = 'none';
+            document.getElementById('authSection').innerHTML = 
+                '<a href="#" class="login-btn" onclick="showLogin()">Masuk</a>';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            showNotification('Anda telah keluar', 'info');
         }
 
-        // Upload & AI Simulation
-        document.getElementById('fileInput').addEventListener('change', handleImageUpload);
-        const uploadArea = document.querySelector('.upload-area');
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
-            uploadArea.addEventListener(event, e => {
-                e.preventDefault();
-                if(['dragenter', 'dragover'].includes(event)) uploadArea.classList.add('dragover');
-                else uploadArea.classList.remove('dragover');
-                if(event === 'drop') {
-                    const files = e.dataTransfer.files;
-                    if(files[0]) document.getElementById('fileInput').files = files;
-                    handleImageUpload({target: {files: files}});
-                }
-            });
+        // Upload Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
         });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            uploadArea.classList.remove('dragover');
+        }
+
+        uploadArea.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', handleImageUpload);
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleImage(files[0]);
+        }
 
         function handleImageUpload(e) {
             const file = e.target.files[0];
-            if(!file) return;
+            handleImage(file);
+        }
+
+        function handleImage(file) {
+            if (!file.type.startsWith('image/')) {
+                showNotification('Harap pilih file gambar!', 'error');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = document.getElementById('previewImg');
-                img.src = e.target.result;
-                simulateAI();
+                currentImage = e.target.result;
+                document.getElementById('resultImage').src = currentImage;
+                analyzeImage();
             };
             reader.readAsDataURL(file);
         }
 
-        function simulateAI() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('aiResult').style.display = 'none';
+        // AI Analysis Simulation (Real-time classification)
+        function analyzeImage() {
+            document.getElementById('results').style.display = 'block';
+            
+            // Simulate AI processing
             setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                const labels = ['Sampah Plastik ♻️', 'Alam Hijau 🌳', 'Polusi Tinggi ⚠️', 'Daur Ulang Siap 🟢'];
-                const confidences = [92, 78, 65, 95];
-                const randomIdx = Math.floor(Math.random() * labels.length);
-                document.getElementById('resultLabel').textContent = labels[randomIdx];
-                document.getElementById('confidence').textContent = `${confidences[randomIdx]}%`;
-                document.getElementById('edukasiTip').textContent = getEdukasiTip(labels[randomIdx]);
-                document.getElementById('aiResult').style.display = 'block';
+                const classifications = simulateAIClassification();
+                displayResults(classifications);
+            }, 1500);
+        }
+
+        function simulateAIClassification() {
+            const categories = [
+                { name: 'Pencemaran Plastik', confidence: Math.random() * 40 + 60 },
+                { name: 'Deforestasi', confidence: Math.random() * 30 + 10 },
+                { name: 'Pencemaran Air', confidence: Math.random() * 25 + 5 },
+                { name: 'Lingkungan Bersih', confidence: Math.random() * 10 }
+            ];
+            
+            return categories.sort((a, b) => b.confidence - a.confidence)[0];
+        }
+
+        function displayResults(result) {
+            const confidence = Math.round(result.confidence);
+            
+            document.getElementById('resultTitle').textContent = result.name;
+            document.getElementById('confidenceFill').style.width = confidence + '%';
+            document.getElementById('confidenceText').textContent = confidence + '% Confidence';
+            
+            // Detailed Analysis
+            const analysisDetail = document.getElementById('analysisDetail');
+            analysisDetail.innerHTML = `
+                <h4>📋 Analisis Detail:</h4>
+                <ul style="text-align: left; margin: 1rem 0;">
+                    <li><strong>Tingkat Kerusakan:</strong> ${getDamageLevel(confidence)}%</li>
+                    <li><strong>Jenis Ancaman:</strong> ${getThreatType(result.name)}</li>
+                    <li><strong>Skala Dampak:</strong> ${getImpactScale(result.name)}</li>
+                    <li><strong>Urgensi Penanganan:</strong> ${getUrgencyLevel(confidence)}</li>
+                </ul>
+            `;
+
+            // Solutions
+            const solutionDetail = document.getElementById('solutionDetail');
+            solutionDetail.innerHTML = `
+                <h4>💡 Solusi Praktis:</h4>
+                <div style="text-align: left;">
+                    ${getSolutions(result.name, confidence)}
+                </div>
+            `;
+        }
+
+        function getDamageLevel(confidence) {
+            if (confidence > 80) return 'Kritis (Sangat Tinggi)';
+            if (confidence > 60) return 'Tinggi';
+            if (confidence > 40) return 'Sedang';
+            return 'Rendah';
+        }
+
+        function getThreatType(name) {
+            const threats = {
+                'Pencemaran Plastik': 'Limbah non-biodegradable, mikroplastik',
+                'Deforestasi': 'Penebangan liar, konversi lahan',
+                'Pencemaran Air': 'Limbah industri, domestik',
+                'Lingkungan Bersih': 'Ekosistem sehat'
+            };
+            return threats[name] || 'Tidak teridentifikasi';
+        }
+
+        function getImpactScale(name) {
+            const impacts = {
+                'Pencemaran Plastik': 'Lokal - Regional (Ekosistem laut)',
+                'Deforestasi': 'Regional - Global (Iklim)',
+                'Pencemaran Air': 'Lokal (Sumber air)',
+                'Lingkungan Bersih': 'Positif (Berkelanjutan)'
+            };
+            return impacts[name] || 'Umum';
+        }
+
+        function getUrgencyLevel(confidence) {
+            if (confidence > 80) return 'Segera (Prioritas 1)';
+            if (confidence > 60) return 'Cepat (Prioritas 2)';
+            return 'Rutinitas (Prioritas 3)';
+        }
+
+        function getSolutions(name, confidence) {
+            const solutions = {
+                'Pencemaran Plastik': `
+                    <ul style="margin: 0.5rem 0;">
+                        <li>🚮 Kumpulkan sampah plastik untuk daur ulang</li>
+                        <li>🛍️ Gunakan tas belanja kain dan botol minum sendiri</li>
+                        <li>📋 Laporkan ke dinas lingkungan setempat</li>
+                        <li>🌱 Tanam mangrove untuk filter alami</li>
+                    </ul>
+                `,
+                'Deforestasi': `
+                    <ul style="margin: 0.5rem 0;">
+                        <li>🌳 Ikut program penanaman pohon</li>
+                        <li>🚫 Hindari produk dari kayu ilegal</li>
+                        <li>📢 Kampanye "Hutan Adalah Napas Bumi"</li>
+                        <li>💰 Donasi ke lembaga konservasi</li>
+                    </ul>
+                `,
+                'Pencemaran Air': `
+                    <ul style="margin: 0.5rem 0;">
+                        <li>🚿 Kurangi penggunaan deterjen fosfat</li>
+                        <li>♻️ Olah air limbah rumah tangga</li>
+                        <li>🌿 Tanam pitekan air di sekitar sungai</li>
+                        <li>⚠️ Laporkan pencemaran industri</li>
+                    </ul>
+                `,
+                'Lingkungan Bersih': `
+                    <ul style="margin: 0.5rem 0;">
+                        <li>✅ Pertahankan dengan 3R (Reduce, Reuse, Recycle)</li>
+                        <li>👨‍👩‍👧‍👦 Edukasi komunitas</li>
+                        <li>📊 Monitor berkala dengan aplikasi ini</li>
+                    </ul>
+                `
+            };
+            return solutions[name] || '<p>Analisis lebih lanjut diperlukan</p>';
+        }
+
+        // Infografis
+        function showInfografis(type) {
+            const modal = document.getElementById('infografisModal');
+            const content = document.getElementById('infografisContent');
+            
+            const infografis = {
+                damage: {
+                    title: '🚨 Dampak Kerusakan Lingkungan',
+                    content: `
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--danger-red);">Dampak Serius Bagi Kehidupan</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div style="background: rgba(239,68,68,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--danger-red);">
+                                <h4>🌡️ Perubahan Iklim</h4>
+                                <p>Suhu global naik 1.1°C, banjir & kekeringan meningkat 50% dalam 20 tahun.</p>
+                            </div>
+                            <div style="background: rgba(239,68,68,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--danger-red);">
+                                <h4>🐟 Kematian Massal Biota Laut</h4>
+                                <p>8 juta ton plastik/tahun membunuh 1 juta burung laut & 100.000 mamalia laut.</p>
+                            </div>
+                            <div style="background: rgba(239,68,68,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--danger-red);">
+                                <h4>🏥 Penyakit Akibat Polusi</h4>
+                                <p>7 juta kematian/tahun karena udara kotor, 90% di negara berkembang.</p>
+                            </div>
+                        </div>
+                    `
+                },
+                clean: {
+                    title: '✅ Lingkungan Bersih = Masa Depan Cerah',
+                    content: `
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary-green);">Manfaat Lingkungan Sehat</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div style="background: rgba(16,185,129,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--primary-green);">
+                                <h4>💧 Air Bersih</h4>
+                                <p>Ekonomi global hemat $4.3T/tahun dari pengobatan penyakit air kotor.</p>
+                            </div>
+                            <div style="background: rgba(16,185,129,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--primary-green);">
+                                <h4>🌳 Udara Sehat</h4>
+                                <p>Meningkatkan produktivitas kerja 10-15% per orang.</p>
+                            </div>
+                            <div style="background: rgba(16,185,129,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--primary-green);">
+                                <h4>🍃 Kesehatan Masyarakat</h4>
+                                <p>Mengurangi biaya kesehatan 30-50% dari penyakit lingkungan.</p>
+                            </div>
+                        </div>
+                    `
+                },
+                impact: {
+                    title: '📈 Dampak Sosial Lingkungan Rusak',
+                    content: `
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--warning-yellow);">Ekonomi & Kesehatan Terancam</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div style="background: rgba(245,158,11,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--warning-yellow);">
+                                <h4>💸 Kerugian Ekonomi</h4>
+                                <p>$4.6T/tahun atau 6.2% GDP global hilang akibat degradasi lingkungan.</p>
+                            </div>
+                            <div style="background: rgba(245,158,11,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--warning-yellow);">
+                                <h4>👥 1 Miliar Orang Terancam</h4>
+                                <p>Pada 2050, 1/6 populasi dunia kekurangan air bersih akibat polusi.</p>
+                            </div>
+                            <div style="background: rgba(245,158,11,0.1); padding: 1.5rem; border-radius: 15px; border-left: 5px solid var(--warning-yellow);">
+                                <h4>🏭 Industri Tutup</h4>
+                                <p>Perikanan rugi $83M/tahun, pariwisata $500M/tahun akibat pantai kotor.</p>
+                            </div>
+                        </div>
+                    `
+                }
+            };
+
+            content.innerHTML = infografis[type].content;
+            modal.style.display = 'flex';
+        }
+
+        function closeInfografis() {
+            document.getElementById('infografisModal').style.display = 'none';
+        }
+
+        // Notification System
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                color: white;
+                font-weight: 600;
+                z-index: 3000;
+                transform: translateX(400px);
+                transition: all 0.4s ease;
+            `;
+            
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                info: '#3b82f6'
+            };
+            
+            notification.style.background = colors[type];
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 400);
             }, 3000);
         }
 
-        function getEdukasiTip(label) {
-            const tips = {
-                'Sampah Plastik ♻️': 'Pisahkan plastik untuk didaur ulang. Hindari botol sekali pakai!',
-                'Alam Hijau 🌳': 'Bagus! Dukung konservasi hutan.',
-                'Polusi Tinggi ⚠️': 'Kurangi plastik & gunakan transportasi umum.',
-                'Daur Ulang Siap 🟢': 'Siap didaur ulang. Bawa ke TPS 3R terdekat.'
-            };
-            return tips[label] || 'Pertahankan lingkungan bersih!';
-        }
-
-        // Additional Features
-        function showEdukasi() {
-            document.getElementById('edukasiSection').classList.toggle('hidden');
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark');
-        }
-
-        // Init
-        initParticles();
-        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark');
-        window.addEventListener('keydown', e => {
-            if(e.key === 'Enter' && document.getElementById('authSection').classList.contains('auth-form')) handleAuth();
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
+
+        // Close modals on outside click
+        window.onclick = function(event) {
+            const loginModal = document.getElementById('loginModal');
+            const infografisModal = document.getElementById('infografisModal');
+            
+            if (event.target === loginModal) {
+                closeLogin();
+            }
+            if (event.target === infografisModal) {
+                closeInfografis();
+            }
+        }
     </script>
 </body>
 </html>
